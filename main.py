@@ -125,18 +125,18 @@ def days_to_birthday(uzer_input: str):
 
 
 # Список команд.
-COMMANDS = {"hello": hello, # Виводить привітання *
-            "add" : add, # Додає контакт в книгу контактів *
-            "change": change, # Заміна телефону A на телефон B *
-            "remove phone" : remove_phones, # Видаляє телефон *
-            "phone" : phone, # Виводить номер телефону за ім'ям *
-            "show all" : show_all, # Показує книгу контактів *
-            "good bye" : exit_uzer, # Виходить з асистента *
-            "close" : exit_uzer, # Виходить з асистента *
-            "exit" : exit_uzer, # Виходить з асистента *
+COMMANDS = {"add" : add, # Додає контакт в книгу контактів *
+            "add phone" : add_phone, # Додає номер телефону до контакту *
             "add birthday" : add_birthday, # Додає день народження *
             "birthday" : days_to_birthday, # Показує скільки днів лишилося до дня народження *
-            "add phone" : add_phone # Додає номер телефону до контакту *
+            "change": change, # Заміна телефону A на телефон B *
+            "close" : exit_uzer, # Виходить з асистента *
+            "exit" : exit_uzer, # Виходить з асистента *
+            "good bye" : exit_uzer, # Виходить з асистента *
+            "hello": hello, # Виводить привітання *
+            "phone" : phone, # Виводить номер телефону за ім'ям *
+            "remove phone" : remove_phones, # Видаляє телефон *
+            "show all" : show_all, # Показує книгу контактів *    
             }
 
 # Знаходить команду.
