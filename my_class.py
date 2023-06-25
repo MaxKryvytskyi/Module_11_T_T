@@ -123,7 +123,10 @@ class Record:
 
     # Виводить залишок до дня народження певної людини 
     def days_to_birthday(self):
-        date_birthday = self.birthday.value
+        try:
+            date_birthday = self.birthday.value
+        except AttributeError:
+            return f"birthday"
         current_datetime = datetime.now()
         new_date = date_birthday.replace(year=current_datetime.year)
         days_birthday = new_date - current_datetime

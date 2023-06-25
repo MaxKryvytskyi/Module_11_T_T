@@ -9,29 +9,29 @@ flag_exit = True
 # Обробка помилок.
 def input_error(func):
     def inner(*argsi,**kwargs): 
-        #try:
-        return func(*argsi,**kwargs)
-        # except TypeError:
-        #     print("Wrong command")
-        #     return main()
-        # except IndexError:
-        #     print('Enter name and phone separated by a space!')
-        #     return main()
-        # except ValueError:
-        #     print("Incorrect data") 
-        #     return main()
-        # except KeyError:
-        #     print("Enter another name.")
-        #     return main()
-        # except AttributeError:
-        #     print('Enter command.')
-        #     return main()
-        # except IncorrectDateFormat:
-        #     print("Incorrect date format")
-        #     return main()
-        # except IncorrectPhoneeFormat:
-        #     print("Incorrect phone format")
-        #     return main()
+        try:
+            return func(*argsi,**kwargs)
+        except TypeError:
+            print("Wrong command")
+            return main()
+        except IndexError:
+            print('Enter name and phone separated by a space!')
+            return main()
+        except ValueError:
+            print("Incorrect data") 
+            return main()
+        except KeyError:
+            print("Enter another name.")
+            return main()
+        except AttributeError:
+            print('Enter command.')
+            return main()
+        except IncorrectDateFormat:
+            print("Incorrect date format")
+            return main()
+        except IncorrectPhoneeFormat:
+            print("Incorrect phone format")
+            return main()
     return inner
 
 # Асистент вітається у відповідь.
@@ -121,7 +121,10 @@ def days_to_birthday(uzer_input: str):
     text = uzer_input.split()
     rec = adress_book[text[1].capitalize()]
     time = rec.days_to_birthday()
-    return f"До дня народження {text[1].capitalize()} залишолося {time}"
+    if len(time) < 10:
+        return f"До контакту {text[1].capitalize()} не додано дату birthday"
+    else:
+        return f"До дня народження {text[1].capitalize()} залишолося {time}"
 
 
 # Список команд.
@@ -136,7 +139,7 @@ COMMANDS = {"add" : add, # Додає контакт в книгу контак�
             "hello": hello, # Виводить привітання *
             "phone" : phone, # Виводить номер телефону за ім'ям *
             "remove phone" : remove_phones, # Видаляє телефон *
-            "show all" : show_all, # Показує книгу контактів *    
+            "show all" : show_all, # Показує книгу контактів *  -+  
             }
 
 # Знаходить команду.
