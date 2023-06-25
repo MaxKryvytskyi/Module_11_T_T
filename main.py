@@ -78,10 +78,10 @@ def change(uzer_input: str):
 def phone(uzer_input: str):
     text = uzer_input.split()
     rec = adress_book[text[1].capitalize()]
-    
-    return f"Номер телефону {text[1].capitalize()} це : {[phone.value for phone in rec.phones]}"
-
-    # return f"Номер телефону {text[1].capitalize()} це :"
+    try:
+        return f"Номер телефону {text[1].capitalize()} це : {[phone.value for phone in rec.phones]}"
+    except AttributeError:
+        return f"Номер телефону {text[1].capitalize()} це :"
     
 
 # Видаляє мобільний телефон
@@ -163,15 +163,11 @@ def handler(uzer_input: str):
 
 @input_error
 def main():
-    n = 10
-    while n > 0: # flag_exit
-        
-        l = ["add max +38066-333-22-22", "phone max"] # , "add phone max +38066-333-22-22"
-        for i in l:
-            uzer_input = i # input("-->")
-            com = handler(uzer_input)
-            print(com(uzer_input.lower()))
-        n -= 1
+    while flag_exit: 
+        uzer_input = input("-->")
+        com = handler(uzer_input)
+        print(com(uzer_input.lower()))
+    
 
 if __name__ == "__main__":
     main()
