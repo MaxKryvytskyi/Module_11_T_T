@@ -18,16 +18,17 @@ class AddtextsBook(UserDict):
 class Field:
 
     def __init__(self, value=None):
-        self._value = value
+        self.__value = None
+        self.value = value
 
     @property
     def value(self):
-        return self._value
+        return self.__value
     
     @value.setter
     def value(self, value: str):
         if value:
-            self._value = value
+            self.__value = value
 
 
 class Name(Field):
@@ -38,11 +39,11 @@ class Phone(Field):
 
     @property
     def value(self):
-        return self._value
+        return self.__value
     
     @value.setter
     def value(self, value: str):
-        
+        print(value)
         if value:
             correct_phone = ""
             for i in value: 
@@ -50,11 +51,11 @@ class Phone(Field):
                     correct_phone += i
             print(correct_phone)
             if len(correct_phone) == 13:    
-                self._value = correct_phone # "+380123456789"
+                self.__value = correct_phone # "+380123456789"
             elif len(correct_phone) == 10: 
-                self._value = "+38" + correct_phone # "0123456789"
+                self.__value = "+38" + correct_phone # "0123456789"
             elif len(correct_phone) == 9:
-                self._value = "+380" + correct_phone # "123456789"
+                self.__value = "+380" + correct_phone # "123456789"
             else:
                 raise IncorrectPhoneeFormat
         
@@ -65,7 +66,7 @@ class Birthday(Field):
 
     @property
     def value(self):
-        return self._value
+        return self.__value
     
     @value.setter
     def value(self, value: str):
@@ -76,7 +77,7 @@ class Birthday(Field):
         birthday = datetime.strptime(value, r'%Y-%m-%d')
     
         if type(today) == type(birthday):
-            self._value = birthday 
+            self.__value = birthday 
         else:
             raise IncorrectDateFormat
     
