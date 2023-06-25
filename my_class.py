@@ -95,8 +95,6 @@ class Record:
 
     # Додає номер 
     def add_phone(self, phones: Phone):
-        print(f"Принт {self.phones[0]}")
-        
         if phones.value not in [phones.value for phones in self.phones]:
             self.phones.append(phones)
         else:
