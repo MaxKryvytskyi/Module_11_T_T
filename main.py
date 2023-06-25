@@ -65,7 +65,7 @@ def add_phone(uzer_input: str):
 
 # Заміна телефону A на телефон B 
 @input_error
-def change(uzer_input: str):
+def change_phone(uzer_input: str):
     text = uzer_input.split()
     rec = adress_book[text[1].capitalize()]
     ret = f"{rec.name.value} : {[phone.value for phone in adress_book[rec.name.value].phones]}\n" + "Змінено на\n"
@@ -82,7 +82,6 @@ def phone(uzer_input: str):
         return f"Номер телефону {text[1].capitalize()} це : {[phone.value for phone in rec.phones]}"
     except AttributeError:
         return f"Номер телефону {text[1].capitalize()} це :"
-    
 
 # Видаляє мобільний телефон
 @input_error
@@ -125,22 +124,67 @@ def days_to_birthday(uzer_input: str):
         return f"До контакту {text[1].capitalize()} не додано дату birthday"
     else:
         return f"До дня народження {text[1].capitalize()} залишолося {time}"
+    
 
+@input_error
+def show_page(_):
+    pass
+
+# Пояснює команди та надає шаблони
+@input_error
+def helper(_):
+    output = ""
+    count = 0
+
+    for k, v in COMMANDS_LIST.items():
+        if count == 0:
+            output += "{:^90}\n".format(" " + "_"*90 + " ")
+        else:
+            output += "{:^90}\n".format("|" + "_"*90 + "|")
+
+        output += "|{:^90}|\n".format(f" COMMANDS - {k}")
+        output += "{:^90}\n".format("|" + "_"*90 + "|")
+        output += "|{:^90}|\n".format(v[0])
+        output += "|{:^90}|\n".format(v[1])
+        output += "{:^90}\n".format("|" + "_"*90 + "|")
+        count += 1
+
+    return output
+
+# Список команд Help
+COMMANDS_LIST = {
+    "add" : ["Команда яка додає в книгу контактів:", "Команда(add) Ім'я(...) Телефон(...) День Народження(...)"], 
+    "add phone" : ["Команда яка додає номер телефону до існуючого списку контактів:", "Команда(add phone) Ім'я(...) Телефон(...)"], 
+    "add birthday" : ["Команда яка додає дату дня народження до існуючого списку контактів:", "Команда(add birthday) Ім'я(...) День Народження(...)"],
+    "birthday" : ["Команда яка показує скільки залишилося до дня народження існуючого списку контактів:", "Команда(birthday) Ім'я(...)"], 
+    "change phone": ["Команда яка замінює в книзі контактів неактуальний телефон:", "Команда(change phone) Ім'я(...) Неактуальний Телефон(...) Актуальний Телефон(...)"], 
+    "close" : ["Команда яка закінчує роботу асистента", "Команда(close)"],
+    "exit" : ["Команда яка закінчує роботу асистента", "Команда(exit)"], 
+    "good bye" : ["Команда яка закінчує роботу асистента", "Команда(good bye)"],
+    "hello": ["Команда привітання", "Команда(hello)"],
+    "help" : ["Команда з прикладами команд", "Команда(help)"], 
+    "phone" : ["Команда яка з книги контактів виводить номер телефону", "Команда(phone) Ім'я(...)"], 
+    "remove phone" : ["Команда яка з книги контактів видаляє номер телефону", "Команда(remove phone) Ім'я(...) Телефон(...)"],
+    "show all" : ["Команда яка виводить всю книгу контактів", "Команда(show all)"] 
+}
 
 # Список команд.
-COMMANDS = {"add" : add, # Додає контакт в книгу контактів *
-            "add phone" : add_phone, # Додає номер телефону до контакту *
-            "add birthday" : add_birthday, # Додає день народження *
-            "birthday" : days_to_birthday, # Показує скільки днів лишилося до дня народження *
-            "change": change, # Заміна телефону A на телефон B *
-            "close" : exit_uzer, # Виходить з асистента *
-            "exit" : exit_uzer, # Виходить з асистента *
-            "good bye" : exit_uzer, # Виходить з асистента *
-            "hello": hello, # Виводить привітання *
-            "phone" : phone, # Виводить номер телефону за ім'ям *
-            "remove phone" : remove_phones, # Видаляє телефон *
-            "show all" : show_all, # Показує книгу контактів *  -+  
-            }
+COMMANDS = {
+    "add" : add, # Додає контакт в книгу контактів *
+    "add phone" : add_phone, # Додає номер телефону до контакту *
+    "add birthday" : add_birthday, # Додає день народження *
+    "birthday" : days_to_birthday, # Показує скільки днів лишилося до дня народження *
+    "change phone": change_phone, # Заміна телефону A на телефон B *
+    "close" : exit_uzer, # Виходить з асистента *
+    "exit" : exit_uzer, # Виходить з асистента *
+    "good bye" : exit_uzer, # Виходить з асистента *
+    "hello": hello, # Виводить привітання *
+    "help" : helper, # Пояснює команди та надає шаблони *
+    "phone" : phone, # Виводить номер телефону за ім'ям *
+    "remove phone" : remove_phones, # Видаляє телефон *
+    "show all" : show_all, # Показує книгу контактів *
+    "show page" : show_page # В разработке -----
+}
 
 # Знаходить команду.
 @input_error    
@@ -159,10 +203,8 @@ def handler(uzer_input: str):
         if text.find(keyword) != -1:
             found_keywords.append(keyword)
     comannds = list(filter(lambda x: len(x) == max(len(com) for com in found_keywords), found_keywords))
-    print(comannds)
+    print(comannds) # <================================================== Для дебага
     return COMMANDS[comannds[0]]
-
-
 
 @input_error
 def main():
@@ -170,7 +212,6 @@ def main():
         uzer_input = input("-->")
         com = handler(uzer_input)
         print(com(uzer_input.lower()))
-    
 
 if __name__ == "__main__":
     main()

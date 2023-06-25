@@ -100,27 +100,27 @@
 #     print(i)
 
 
-from collections import UserDict
+# from collections import UserDict
 
-class RecordDict(UserDict):
-    def __iter__(self):
-        self._keys = iter(self.data.keys())
-        return self
+# class RecordDict(UserDict):
+#     def __iter__(self):
+#         self._keys = iter(self.data.keys())
+#         return self
 
-    def __next__(self):
-        key = next(self._keys)
-        return self.data[key]
+#     def __next__(self):
+#         key = next(self._keys)
+#         return self.data[key]
 
 
 
-d = {"key1": "value1", "key2": "value2", "key3": "value3", "key4": "value4", "key5": "value5", 
-     "key6": "value6", "key7": "value7", "key8": "value8", "key9": "value9", "key10": "value10", 
-     "key11": "value11", "key12": "value12", "key13": "value13", "key14": "value14", "key15": "value15"
-     }
-record_dict = RecordDict(d)
+# d = {"key1": "value1", "key2": "value2", "key3": "value3", "key4": "value4", "key5": "value5", 
+#      "key6": "value6", "key7": "value7", "key8": "value8", "key9": "value9", "key10": "value10", 
+#      "key11": "value11", "key12": "value12", "key13": "value13", "key14": "value14", "key15": "value15"
+#      }
+# record_dict = RecordDict(d)
 
-for value in record_dict:
-    print(value)
+# for value in record_dict:
+#     print(value)
 
 # def iterate_dict_in_chunks(dictionary, chunk_size):
 #     keys = list(dictionary.keys())  # Отримуємо список ключів словника
@@ -138,3 +138,29 @@ for value in record_dict:
 
 # iterate_dict_in_chunks(d, 3)
 
+def get_formatted_commands(commands_list):
+    output = ""
+    count = 0
+
+    for _, v in commands_list.items():
+        if count == 0:
+            output += "{:^100}\n".format(" " + "_"*100 + " ")
+        else:
+            output += "{:^100}\n".format("|" + "_"*100 + "|")
+        output += "|{:^100}|\n".format(f" COMMANDS - {_}")
+        output += "{:^100}\n".format("|" + "_"*100 + "|")
+        output += "|{:^100}|\n".format(v[0])
+        output += "|{:^100}|\n".format(v[1])
+        output += "{:^100}\n".format("|" + "_"*100 + "|")
+        count += 1
+
+    return output
+
+my_commands = {
+    "command1": ["Description 1", "Details 1"],
+    "command2": ["Description 2", "Details 2"],
+    "command3": ["Description 3", "Details 3"]
+}
+
+result = get_formatted_commands(my_commands)
+print(result)
