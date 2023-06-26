@@ -70,24 +70,30 @@
 
 
 
-
-
+# Работает
 class Iterable:
-
+    d = {"1": "value1", "2": "value2", "3": "value3", "4": "value4", "5": "value5", 
+     "6": "value6", "7": "value7", "8": "value8", "9": "value9", "10": "value10", 
+     "11": "value11", "12": "value12", "13": "value13", "14": "value14", "15": "value15",
+     "16": "value16", "17": "value17", "18": "value18", "19": "value19", "20": "value20"
+     }
     current_page = 1
     def __init__(self, step, max_step):
         self.step = step
         self.max_step = max_step
         self.current_value = ""
-        self.count = 0
+        self.count = 1
 
     def __next__(self):
-        if self.count < self.max_step:
+        if self.count <= self.max_step:
             self.current_value = f'page : {self.current_page}\n'
+            try:
+                for _ in range(self.step):
+                    self.current_value += f"{self.d[str(self.count)]}" + "\n"
+                    self.count +=1
+            except KeyError:
+                return self.current_value.strip()
             
-            for _ in range(self.step):
-                self.current_value += str(self.count) + "\n"
-                self.count +=1
             self.current_page += 1
             return self.current_value.strip()
         raise StopIteration
@@ -105,7 +111,9 @@ class CustomIterator:
 
 c = CustomIterator(3, 20)
 for i in c:
+    _ = input("--->>> Enter")
     print(i)
+    
 
 
 
