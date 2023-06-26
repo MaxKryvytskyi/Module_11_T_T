@@ -20,6 +20,7 @@ class Field:
     def __init__(self, value=None):
         self.__value = None
         self.value = value
+        print(value)
 
     @property
     def value(self):
@@ -43,13 +44,11 @@ class Phone(Field):
     
     @value.setter
     def value(self, value: str):
-        print(value)
         if value:
             correct_phone = ""
             for i in value: 
                 if i in "+0123456789":
                     correct_phone += i
-            print(correct_phone)
             if len(correct_phone) == 13:    
                 self.__value = correct_phone # "+380123456789"
             elif len(correct_phone) == 10: 
@@ -70,9 +69,7 @@ class Birthday(Field):
     
     @value.setter
     def value(self, value: str):
-        
-        for i in value:
-            value = i
+        print(value)
         today = datetime.now()
         birthday = datetime.strptime(value, r'%Y-%m-%d')
     
@@ -88,6 +85,8 @@ class Record:
         self.name = name
         self.phones = []
         self.birthday = birthday
+        if birthday:
+            self.add_to_birthday(birthday)
         if type(phones) == list:
             self.phones.extend(phones)
         else: 

@@ -43,7 +43,12 @@ def hello(_):
 @input_error
 def add(uzer_input: str):
     text = uzer_input.split()
-    if len(text) > 2:
+    if len(text) >= 4:
+        rec = Record(Name(text[1].capitalize()), [Phone(text[2])], Birthday(text[3]))
+        flag = adress_book.add_record(rec)
+        if flag:
+            return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} та з Birthday {text[3]} створений" 
+    elif len(text) >= 2:
         rec = Record(Name(text[1].capitalize()), [Phone(text[2])])
         flag = adress_book.add_record(rec)
         if flag:
@@ -56,7 +61,8 @@ def add(uzer_input: str):
     
     return f" "
 
-# Додавання телефону до контакту 
+# Додавання телефону до контакту
+@input_error
 def add_phone(uzer_input: str):
     text = uzer_input.split()
     rec = adress_book[text[2].capitalize()]
@@ -96,7 +102,12 @@ def remove_phones(uzer_input: str):
 def show_all(_):
     text = ''
     for key, record in adress_book.items():
-        text += f"{key} : {[phone.value for phone in record.phones]}\n"
+        rec = adress_book[key.capitalize()]
+        time = rec.days_to_birthday()
+        if len(time) < 10:
+            text += f"{key} : {[phone.value for phone in record.phones]}\n"
+        else:
+            text += f"{key} : {[phone.value for phone in record.phones]}, Birthday {key} : {time}\n"
     return text if text else "Addtexts book is empty."
 
 # Зупиняє роботу асистента.
@@ -205,6 +216,19 @@ def handler(uzer_input: str):
     comannds = list(filter(lambda x: len(x) == max(len(com) for com in found_keywords), found_keywords))
     print(comannds) # <================================================== Для дебага
     return COMMANDS[comannds[0]]
+
+# @input_error
+# def main():
+#     comm_list = ["add max +380993332211 2000-06-23"]
+#     f = 1
+#     while f > 0: 
+#         # uzer_input = input("-->")
+#         for i in comm_list:
+#             uzer_input = i
+#             com = handler(uzer_input)
+#             print(com(uzer_input.lower()))
+#             f -= 1
+
 
 @input_error
 def main():
