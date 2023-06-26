@@ -72,22 +72,82 @@
 
 
 
+class Iterable:
+
+    current_page = 1
+    def __init__(self, step, max_step):
+        self.step = step
+        self.max_step = max_step
+        self.current_value = ""
+        self.count = 0
+
+    def __next__(self):
+        if self.count < self.max_step:
+            self.current_value = f'page : {self.current_page}\n'
+            
+            for _ in range(self.step):
+                self.current_value += str(self.count) + "\n"
+                self.count +=1
+            self.current_page += 1
+            return self.current_value.strip()
+        raise StopIteration
+
+
+class CustomIterator:
+
+    def __init__(self, step, max_step):
+        self.step = step
+        self.max_step = max_step
+
+    def __iter__(self):
+        return Iterable(self.step, self.max_step)
+
+
+c = CustomIterator(3, 20)
+for i in c:
+    print(i)
+
+
+
+# >>> show all 3
+# page 1
+# contact1
+# contact2
+# contact3
+# page 2
+# contact4
+# contact5
+# contact6
+# page 3
+# contact 7
+
+
+
+
 # class Iterable:
+#     current_page = 1
+
 #     def __init__(self, step, max_step):
 #         self.step = step
 #         self.max_step = max_step
-#         self.current_value = 0
+#         self.current_value = ""
+#         self.count = 0
 
 #     def __next__(self):
-#         if self.current_value < self.max_step:
-#             self.current_value += self.step
-#             return self.current_value
+
+#         if self.count < self.max_step:
+#             self.current_value = f'page: {self.current_page}\n'
+#             for _ in range(self.step):
+#                 self.current_value += str(self.count) + "\n"
+#                 self.count += 1
+#             self.current_page += 1
+#             return self.current_value.strip()
 #         raise StopIteration
 
 
 # class CustomIterator:
 
-#     def __init__(self, step, max_step) -> None:
+#     def __init__(self, step, max_step):
 #         self.step = step
 #         self.max_step = max_step
 
@@ -95,9 +155,21 @@
 #         return Iterable(self.step, self.max_step)
 
 
-# c = CustomIterator(2, 12)
+# c = CustomIterator(3, 20)
 # for i in c:
 #     print(i)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # from collections import UserDict
@@ -138,29 +210,29 @@
 
 # iterate_dict_in_chunks(d, 3)
 
-def get_formatted_commands(commands_list):
-    output = ""
-    count = 0
+# def get_formatted_commands(commands_list):
+#     output = ""
+#     count = 0
 
-    for _, v in commands_list.items():
-        if count == 0:
-            output += "{:^100}\n".format(" " + "_"*100 + " ")
-        else:
-            output += "{:^100}\n".format("|" + "_"*100 + "|")
-        output += "|{:^100}|\n".format(f" COMMANDS - {_}")
-        output += "{:^100}\n".format("|" + "_"*100 + "|")
-        output += "|{:^100}|\n".format(v[0])
-        output += "|{:^100}|\n".format(v[1])
-        output += "{:^100}\n".format("|" + "_"*100 + "|")
-        count += 1
+#     for _, v in commands_list.items():
+#         if count == 0:
+#             output += "{:^100}\n".format(" " + "_"*100 + " ")
+#         else:
+#             output += "{:^100}\n".format("|" + "_"*100 + "|")
+#         output += "|{:^100}|\n".format(f" COMMANDS - {_}")
+#         output += "{:^100}\n".format("|" + "_"*100 + "|")
+#         output += "|{:^100}|\n".format(v[0])
+#         output += "|{:^100}|\n".format(v[1])
+#         output += "{:^100}\n".format("|" + "_"*100 + "|")
+#         count += 1
 
-    return output
+#     return output
 
-my_commands = {
-    "command1": ["Description 1", "Details 1"],
-    "command2": ["Description 2", "Details 2"],
-    "command3": ["Description 3", "Details 3"]
-}
+# my_commands = {
+#     "command1": ["Description 1", "Details 1"],
+#     "command2": ["Description 2", "Details 2"],
+#     "command3": ["Description 3", "Details 3"]
+# }
 
-result = get_formatted_commands(my_commands)
-print(result)
+# result = get_formatted_commands(my_commands)
+# print(result)
