@@ -1,8 +1,4 @@
-import re
-
-
-from my_class import AddtextsBook, Record, Name, Phone, Birthday, IncorrectDateFormat, IncorrectPhoneeFormat 
-
+from my_class import AddtextsBook, Record, Name, Phone, Birthday, IncorrectDateFormat, IncorrectPhoneeFormat
 adress_book = AddtextsBook()
 flag_exit = True
 
@@ -34,27 +30,22 @@ def input_error(func):
             return main()
     return inner
 
-# Асистент вітається у відповідь.
-@input_error
-def hello(_):
-    return "How can I help you?"
-
 # Асистент додає ім'я та номер телефону якщо є до книги контактів.
 @input_error
-def add(uzer_input: str):
+def add(uzer_input: str) -> str:
     text = uzer_input.split()
     if len(text) >= 4:
         rec = Record(Name(text[1].capitalize()), [Phone(text[2])], Birthday(text[3]))
         flag = adress_book.add_record(rec)
         if flag:
             return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} та з Birthday {text[3]} створений" 
-    elif len(text) >= 2:
+    elif len(text) > 2:
         rec = Record(Name(text[1].capitalize()), [Phone(text[2])])
         flag = adress_book.add_record(rec)
         if flag:
             return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} створений" 
     else:
-        rec = Record(Name(text[1].capitalize())) # , [Phone(None)]
+        rec = Record(Name(text[1].capitalize()), Phone())
         flag = adress_book.add_record(rec)
         if flag:
             return f"Контакт {text[1].capitalize()} без номера телефону створений" 
@@ -63,35 +54,50 @@ def add(uzer_input: str):
 
 # Додавання телефону до контакту
 @input_error
-def add_phone(uzer_input: str):
+def add_phone(uzer_input: str) -> str:
     text = uzer_input.split()
     rec = adress_book[text[2].capitalize()]
     rec.add_phone(Phone(text[3]))
     return f"До контакту {text[2].capitalize()} доданий новий телефон"
 
+# Додає день народження 
+@input_error
+def add_birthday(uzer_input: str) -> str:
+    text = uzer_input.split()
+    rec = adress_book[text[2].capitalize()]
+    rec.add_to_birthday(Birthday([text[3]]))
+    return f"Birthday для {text[2].capitalize()} записаний"
+
 # Заміна телефону A на телефон B 
 @input_error
-def change_phone(uzer_input: str):
+def change_phone(uzer_input: str) -> str:
     text = uzer_input.split()
     rec = adress_book[text[1].capitalize()]
     ret = f"{rec.name.value} : {[phone.value for phone in adress_book[rec.name.value].phones]}\n" + "Змінено на\n"
     rec.edit_phone(Phone(text[2]), Phone(text[3]))
     ret += f"{rec.name.value} : {[phone.value for phone in rec.phones]}"
     return ret
+
+# Зупиняє роботу асистента.
+@input_error
+def exit_uzer(_):
+    global flag_exit
+    flag_exit = False
+    return "Good bye!"
     
 # Ассистент за ім'ям знаходить в контактах номер.
 @input_error
-def phone(uzer_input: str):
+def phone(uzer_input: str) -> str:
     text = uzer_input.split()
     rec = adress_book[text[1].capitalize()]
     try:
         return f"Номер телефону {text[1].capitalize()} це : {[phone.value for phone in rec.phones]}"
     except AttributeError:
-        return f"Номер телефону {text[1].capitalize()} це :"
+        return f"До контакту {text[1].capitalize()} ще не додано номер телефону "
 
 # Видаляє мобільний телефон
 @input_error
-def remove_phones(uzer_input: str):
+def remove_phones(uzer_input: str) -> str:
     text = uzer_input.split()
     rec = adress_book[text[2].capitalize()]
     rec.remove_phone(Phone(text[3]))
@@ -110,21 +116,6 @@ def show_all(_):
             text += f"{key} : {[phone.value for phone in record.phones]}, Birthday {key} : {time}\n"
     return text if text else "Addtexts book is empty."
 
-# Зупиняє роботу асистента.
-@input_error
-def exit_uzer(_):
-    global flag_exit
-    flag_exit = False
-    return "Good bye!"
-
-# Додає день народження 
-@input_error
-def add_birthday(uzer_input: str):
-    text = uzer_input.split()
-    rec = adress_book[text[2].capitalize()]
-    rec.add_to_birthday(Birthday([text[3]]))
-    return f"Birthday для {text[2].capitalize()} записаний"
-
 # Показує скільки днів лишилося до дня народження
 @input_error
 def days_to_birthday(uzer_input: str):
@@ -136,10 +127,28 @@ def days_to_birthday(uzer_input: str):
     else:
         return f"До дня народження {text[1].capitalize()} залишолося {time}"
     
-
+# Повертає сторінки книги контактів з кількістю N контактів на сторінці
 @input_error
-def show_page(_):
-    pass
+def show_page(uzer_input:str, count=5) -> None:
+    n = 1
+    text = uzer_input.split()
+
+    if len(text) > 2:
+        count = text[2]
+    
+    c = adress_book.iterator(count)
+
+    for _ in range(1000):
+        try:
+            text = next(c)
+        except StopIteration:
+            if n > 1 :
+                return f"No more pages"
+            else:
+                return f"No saved contacts"
+        _ = input(f"Page : {n}")
+        print(text)
+        n += 1
 
 # Пояснює команди та надає шаблони
 @input_error
@@ -152,15 +161,18 @@ def helper(_):
             output += "{:^90}\n".format(" " + "_"*90 + " ")
         else:
             output += "{:^90}\n".format("|" + "_"*90 + "|")
-
         output += "|{:^90}|\n".format(f" COMMANDS - {k}")
         output += "{:^90}\n".format("|" + "_"*90 + "|")
         output += "|{:^90}|\n".format(v[0])
         output += "|{:^90}|\n".format(v[1])
         output += "{:^90}\n".format("|" + "_"*90 + "|")
         count += 1
-
     return output
+
+# Асистент вітається у відповідь.
+@input_error
+def hello(_):
+    return "How can I help you?"
 
 # Список команд Help
 COMMANDS_LIST = {
@@ -176,7 +188,8 @@ COMMANDS_LIST = {
     "help" : ["Команда з прикладами команд", "Команда(help)"], 
     "phone" : ["Команда яка з книги контактів виводить номер телефону", "Команда(phone) Ім'я(...)"], 
     "remove phone" : ["Команда яка з книги контактів видаляє номер телефону", "Команда(remove phone) Ім'я(...) Телефон(...)"],
-    "show all" : ["Команда яка виводить всю книгу контактів", "Команда(show all)"] 
+    "show all" : ["Команда яка виводить всю книгу контактів", "Команда(show all)"],
+    "show page" : ["Команда яка виводить книгу контактів посторінково", "Команда(show page) Контактів на сторінці(...)"]
 }
 
 # Список команд.
@@ -194,17 +207,9 @@ COMMANDS = {
     "phone" : phone, # Виводить номер телефону за ім'ям *
     "remove phone" : remove_phones, # Видаляє телефон *
     "show all" : show_all, # Показує книгу контактів *
-    "show page" : show_page # В разработке -----
+    "show page" : show_page # Виводить книгу контактів посторінково *
 }
 
-# Знаходить команду.
-@input_error    
-def handler(uzer_input: str):
-    text = uzer_input.lower()
-    for keys in COMMANDS.keys():
-        if re.findall(text, keys):
-            return COMMANDS[keys]
-        
 # Знаходить команду.
 @input_error    
 def handler(uzer_input: str):
@@ -214,28 +219,14 @@ def handler(uzer_input: str):
         if text.find(keyword) != -1:
             found_keywords.append(keyword)
     comannds = list(filter(lambda x: len(x) == max(len(com) for com in found_keywords), found_keywords))
-    print(comannds) # <================================================== Для дебага
     return COMMANDS[comannds[0]]
-
-# @input_error
-# def main():
-#     comm_list = ["add max +380993332211 2000-06-23"]
-#     f = 1
-#     while f > 0: 
-#         # uzer_input = input("-->")
-#         for i in comm_list:
-#             uzer_input = i
-#             com = handler(uzer_input)
-#             print(com(uzer_input.lower()))
-#             f -= 1
-
 
 @input_error
 def main():
     while flag_exit: 
-        uzer_input = input("-->")
-        com = handler(uzer_input)
-        print(com(uzer_input.lower()))
+            uzer_input = input("-->")
+            com = handler(uzer_input)
+            print(com(uzer_input.lower()))
 
 if __name__ == "__main__":
     main()
