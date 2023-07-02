@@ -103,19 +103,6 @@ def remove_phones(uzer_input: str) -> str:
     rec.remove_phone(Phone(text[3]))
     return f"Номер телефону {text[2].capitalize()} : {text[3]}\nВидалений"
 
-# Ассистент показує всі контактні дані.
-@input_error
-def show_all(_):
-    text = ''
-    for key, record in adress_book.items():
-        rec = adress_book[key.capitalize()]
-        time = rec.days_to_birthday()
-        if len(time) < 10:
-            text += f"{key} : {[phone.value for phone in record.phones]}\n"
-        else:
-            text += f"{key} : {[phone.value for phone in record.phones]}, Birthday {key} : {time}\n"
-    return text if text else "Addtexts book is empty."
-
 # Показує скільки днів лишилося до дня народження
 @input_error
 def days_to_birthday(uzer_input: str):
@@ -188,7 +175,6 @@ COMMANDS_LIST = {
     "help" : ["Команда з прикладами команд", "Команда(help)"], 
     "phone" : ["Команда яка з книги контактів виводить номер телефону", "Команда(phone) Ім'я(...)"], 
     "remove phone" : ["Команда яка з книги контактів видаляє номер телефону", "Команда(remove phone) Ім'я(...) Телефон(...)"],
-    "show all" : ["Команда яка виводить всю книгу контактів", "Команда(show all)"],
     "show page" : ["Команда яка виводить книгу контактів посторінково", "Команда(show page) Контактів на сторінці(...)"]
 }
 
@@ -206,7 +192,6 @@ COMMANDS = {
     "help" : helper, # Пояснює команди та надає шаблони *
     "phone" : phone, # Виводить номер телефону за ім'ям *
     "remove phone" : remove_phones, # Видаляє телефон *
-    "show all" : show_all, # Показує книгу контактів *
     "show page" : show_page # Виводить книгу контактів посторінково *
 }
 
