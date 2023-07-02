@@ -7,29 +7,29 @@ flag_exit = True
 # Обробка помилок.
 def input_error(func):
     def inner(*argsi,**kwargs): 
-        # try:
-        return func(*argsi,**kwargs)
-        # except TypeError:
-        #     print("Wrong command")
-        #     return main()
-        # except IndexError:
-        #     print('Enter name and phone separated by a space!')
-        #     return main()
-        # except ValueError:
-        #     print("Incorrect data") 
-        #     return main()
-        # except KeyError:
-        #     print("Enter another name.")
-        #     return main()
-        # except AttributeError:
-        #     print('Enter command.')
-        #     return main()
-        # except IncorrectDateFormat:
-        #     print("Incorrect date format")
-        #     return main()
-        # except IncorrectPhoneeFormat:
-        #     print("Incorrect phone format")
-        #     return main()
+        try:
+            return func(*argsi,**kwargs)
+        except TypeError:
+            print("Wrong command")
+            return main()
+        except IndexError:
+            print('Enter name and phone separated by a space!')
+            return main()
+        except ValueError:
+            print("Incorrect data") 
+            return main()
+        except KeyError:
+            print("Enter another name.")
+            return main()
+        except AttributeError:
+            print('Enter command.')
+            return main()
+        except IncorrectDateFormat:
+            print("Incorrect date format")
+            return main()
+        except IncorrectPhoneeFormat:
+            print("Incorrect phone format")
+            return main()
     return inner
 
 # Асистент додає ім'я та номер телефону якщо є до книги контактів.
