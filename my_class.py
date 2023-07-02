@@ -1,3 +1,4 @@
+import re
 from collections import UserDict
 from datetime import datetime
 
@@ -29,8 +30,8 @@ class AddtextsBook(UserDict):
         new_list1 = []
         for i in self.data.values():
             value_birthday = "No birthday date"
-            name_value = f"Name {i.name.value}: "
-            phone_value = f"Phone {[ii.value for ii in i.phones]} "
+            name_value = f"Name : {i.name.value} "
+            phone_value = f" {[el.value for el in i.phones]}"
             birthday_value = f"Birthday {i.birthday.value if i.birthday else value_birthday}"
             
             new_list = [name_value, phone_value, birthday_value]
@@ -49,6 +50,7 @@ class AddtextsBook(UserDict):
     def create_print_page(self, page:int, contacts:list) -> str:
         result = ""
         n = 12
+        pattern = r"[\[\'\'\"\"\]]"  # видаляємо зайве
         if page > 9:
             n = 11
         elif page > 99:
@@ -60,12 +62,27 @@ class AddtextsBook(UserDict):
 
         for i in range(0, len(contacts)):
             name_value, phone_value, birthday_value = contacts[i]
-            if i == 0:
-                result += " {:^90}".format("_"*92) + "\n"
+            p = phone_value.split(",")
+            count = 1 
+            if len(p) > 1:
+                
+                for iii in p:
+                    new_i = re.sub(pattern, "", iii)
+                    if count == 1 and i == 0:
+                        result += " {:^90}".format("_"*92) + "\n"
+                        result += "| {:<29}| {:<29}| {:<29}|".format(name_value, f"Phone {count} :{new_i}", birthday_value) + "\n"
+                    else:
+                        result += "| {:<29}| {:<29}| {:<29}|".format("", f"Phone {count} :{new_i}", "") + "\n"
+                    count += 1
+            
             else:
-                result += "{:^90}".format("|" + "_"*30 +"|"+ "_"*30 +"|"+ "_"*30 +"|") + "\n"
-            result += "| {:<29}| {:<29}| {:<29}|".format(name_value, phone_value, birthday_value) + "\n"
-
+                new_i = re.sub(pattern, "", phone_value)
+                if i == 0:
+                    result += " {:^90}".format("_"*92) + "\n"
+                else:
+                    result += "{:^90}".format("|" + "_"*30 +"|"+ "_"*30 +"|"+ "_"*30 +"|") + "\n"
+                result += "| {:<29}| {:<29}| {:<29}|".format(name_value, f"Phone {count} :{new_i}", birthday_value) + "\n"
+        
         result += "{:^90}".format("|" + "_"*30 +"|"+ "_"*30 +"|"+ "_"*30 +"|") + "\n"
         return result
 
@@ -84,6 +101,9 @@ class Field:
     def value(self, value: str):
         if value:
             self.__value = value
+    
+    def __repr__(self) -> str:
+        return f"{self.__value}"
 
 
 class Name(Field):
@@ -112,7 +132,7 @@ class Phone(Field):
             else:
                 raise IncorrectPhoneeFormat
         else:
-            self.__value = []
+            self.__value = "No Phone"
             
 
 class Birthday(Field):
@@ -123,7 +143,6 @@ class Birthday(Field):
     
     @value.setter
     def value(self, value: str):
-        
         today = datetime.now()
         birthday = datetime.strptime(value, r'%Y-%m-%d')
     
@@ -151,7 +170,10 @@ class Record:
     def add_phone(self, phones: Phone) -> None:
     
         if phones.value not in [phones.value for phones in self.phones]:
-            self.phones.append(phones)
+            if "No Phone" in [phones.value for phones in self.phones]:
+                self.phones[0] = phones
+            else:
+                self.phones.append(phones)
         else:
             print("This phone already added.")
 
