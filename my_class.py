@@ -50,11 +50,9 @@ class AddtextsBook(UserDict):
     def create_print_page(self, page:int, contacts:list) -> str:
         result = ""
         n = 12
-
         pattern = r"[\[\'\'\"\"\]]"  # видаляємо зайве
         if page > 9:
             n = 11
-
         elif page > 99:
             n = 10
 
@@ -171,7 +169,6 @@ class Record:
 
     # Додає номер 
     def add_phone(self, phones: Phone) -> None:
-        print(phones.value)
         if phones.value not in [phones.value for phones in self.phones]:
             if "No Phone" in [phones.value for phones in self.phones]:
                 self.phones[0] = phones
