@@ -8,10 +8,9 @@ class AddtextsBook(UserDict):
     def add_record(self, record):
         if record.name.value not in self.keys():
             self.data[record.name.value] = record
-            return True
+            return (True, " ")
         else:
-            print("Name already exist. Try add phone command for add extra phone.")
-            return False
+            return (False, "Name already exist. Try add phone command for add extra phone.")
     
     def iterator(self, num:int) -> str:
         result = self.create_page(num)
@@ -21,6 +20,7 @@ class AddtextsBook(UserDict):
             yield value
 
     def create_page(self, num:int) -> dict|None:
+
         if len(self.data) == 0:
             return None
         result_list = {}
@@ -50,9 +50,11 @@ class AddtextsBook(UserDict):
     def create_print_page(self, page:int, contacts:list) -> str:
         result = ""
         n = 12
+
         pattern = r"[\[\'\'\"\"\]]"  # видаляємо зайве
         if page > 9:
             n = 11
+
         elif page > 99:
             n = 10
 
@@ -64,8 +66,8 @@ class AddtextsBook(UserDict):
             name_value, phone_value, birthday_value = contacts[i]
             p = phone_value.split(",")
             count = 1 
+
             if len(p) > 1:
-                
                 for iii in p:
                     new_i = re.sub(pattern, "", iii)
                     if count == 1 and i == 0:
@@ -125,6 +127,8 @@ class Phone(Field):
                     correct_phone += i
             if len(correct_phone) == 13:    
                 self.__value = correct_phone # "+380123456789"
+            elif len(correct_phone) == 12: 
+                self.__value = "+" + correct_phone # "380123456789"
             elif len(correct_phone) == 10: 
                 self.__value = "+38" + correct_phone # "0123456789"
             elif len(correct_phone) == 9:
@@ -162,22 +166,19 @@ class Record:
             self.add_to_birthday(birthday)
         if type(phones) == list:
             self.phones.extend(phones)
-        else: 
+        else:
             self.phones.append(phones)
-    
 
     # Додає номер 
     def add_phone(self, phones: Phone) -> None:
-    
+        print(phones.value)
         if phones.value not in [phones.value for phones in self.phones]:
             if "No Phone" in [phones.value for phones in self.phones]:
                 self.phones[0] = phones
             else:
                 self.phones.append(phones)
         else:
-            print("This phone already added.")
-
-            
+            return f"This phone already added."
 
     # Видаляє номер 
     def remove_phone(self, phones: Phone) -> None:
@@ -188,13 +189,13 @@ class Record:
     # Заміна номера А на номер Б
     def edit_phone(self, old_phone: Phone, new_phone: Phone) -> None:
         if old_phone.value == new_phone.value or new_phone.value in [phone.value for phone in self.phones]:
-            print("This phone alredy exist!")
+            return f"This phone alredy exist!"
         elif old_phone.value not in [phone.value for phone in self.phones]:
-            print("This phone not found!")
+            return f"This phone not found!"
         else:
             self.remove_phone(old_phone)
             self.add_phone(new_phone)
-            print("Phone changed.")
+            return f"Phone changed."
 
     # Додає birthday
     def add_to_birthday(self, birthday: Birthday) -> None:
@@ -210,18 +211,16 @@ class Record:
         new_date = date_birthday.replace(year=current_datetime.year)
         days_birthday = new_date - current_datetime
 
+        hours = int(days_birthday.seconds // 3600)
+        minutes = int((days_birthday.seconds % 3600) // 60)
+        seconds = int(days_birthday.seconds % 60)
+
         if days_birthday.days >= 0:
-            hours = int(days_birthday.seconds // 3600)
-            minutes = int((days_birthday.seconds % 3600) // 60)
-            seconds = int(days_birthday.seconds % 60)
             return f"{days_birthday.days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
         
         else:
             date = date_birthday.replace(year=current_datetime.year+1)
             days_birthday = date - current_datetime
-            hours = int(days_birthday.seconds // 3600)
-            minutes = int((days_birthday.seconds % 3600) // 60)
-            seconds = int(days_birthday.seconds % 60)
             return f"{days_birthday.days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
 
 

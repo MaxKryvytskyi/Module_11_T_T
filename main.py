@@ -10,26 +10,19 @@ def input_error(func):
         try:
             return func(*argsi,**kwargs)
         except TypeError:
-            print("Wrong command")
-            return main()
+            return f"Wrong command"
         except IndexError:
-            print('Enter name and phone separated by a space!')
-            return main()
+            return f"Enter name and phone separated by a space!"
         except ValueError:
-            print("Incorrect data") 
-            return main()
+            return f"Incorrect data"
         except KeyError:
-            print("Enter another name.")
-            return main()
+            return f"Enter another name."
         except AttributeError:
-            print('Enter command.')
-            return main()
+            return f"Enter command."
         except IncorrectDateFormat:
-            print("Incorrect date format")
-            return main()
+            return f"Incorrect date format"
         except IncorrectPhoneeFormat:
-            print("Incorrect phone format")
-            return main()
+            return f"Incorrect phone format"
     return inner
 
 # Асистент додає ім'я та номер телефону якщо є до книги контактів.
@@ -38,21 +31,21 @@ def add(uzer_input: str) -> str:
     text = uzer_input.split()
     if len(text) >= 4:
         rec = Record(Name(text[1].capitalize()), [Phone(text[2])], Birthday(text[3]))
-        flag = adress_book.add_record(rec)
+        flag, text1 = adress_book.add_record(rec)
         if flag:
             return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} та з Birthday {text[3]} створений" 
     elif len(text) > 2:
         rec = Record(Name(text[1].capitalize()), [Phone(text[2])])
-        flag = adress_book.add_record(rec)
+        flag, text1 = adress_book.add_record(rec)
         if flag:
             return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} створений" 
     else:
         rec = Record(Name(text[1].capitalize()), Phone())
-        flag = adress_book.add_record(rec)
+        flag, text1 = adress_book.add_record(rec)
         if flag:
             return f"Контакт {text[1].capitalize()} без номера телефону створений" 
     
-    return f" "
+    return text1
 
 # Додавання телефону до контакту
 @input_error
@@ -121,12 +114,9 @@ def days_to_birthday(uzer_input: str):
 def show_page(uzer_input:str, count=5) -> None:
     n = 1
     text = uzer_input.split()
-
     if len(text) > 2:
         count = text[2]
-    
     c = adress_book.iterator(count)
-
     for _ in range(1000):
         try:
             text = next(c)
@@ -182,7 +172,7 @@ COMMANDS_LIST = {
 
 # Список команд.
 COMMANDS = {
-    "add" : add, # Додає контакт в книгу контактів *
+    "add" : add, # Додає контакт в книгу контактів +
     "add phone" : add_phone, # Додає номер телефону до контакту *
     "add birthday" : add_birthday, # Додає день народження *
     "birthday" : days_to_birthday, # Показує скільки днів лишилося до дня народження *
@@ -212,9 +202,9 @@ def handler(uzer_input: str):
 @input_error
 def main():
     while flag_exit: 
-            uzer_input = input("-->")
-            com = handler(uzer_input)
-            print(com(uzer_input.lower()))
+        uzer_input = input("-->")
+        com = handler(uzer_input)
+        print(com(uzer_input.lower()))
 
 if __name__ == "__main__":
     main()
