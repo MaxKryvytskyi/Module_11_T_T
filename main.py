@@ -36,31 +36,23 @@ def input_error(func):
 @input_error
 def add(uzer_input: str) -> str:
     text = uzer_input.split()
-    if len(text) >= 4:
-        rec = Record(Name(text[1].capitalize()), [Phone(text[2])], Birthday(text[3]))
-        flag = adress_book.add_record(rec)
-        if flag:
-            return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} та з Birthday {text[3]} створений" 
-    elif len(text) > 2:
-        rec = Record(Name(text[1].capitalize()), [Phone(text[2])])
-        flag = adress_book.add_record(rec)
-        if flag:
-            return f"Контакт {text[1].capitalize()} з номером {[phone.value for phone in rec.phones]} створений" 
-    else:
-        rec = Record(Name(text[1].capitalize()), Phone())
-        flag = adress_book.add_record(rec)
-        if flag:
-            return f"Контакт {text[1].capitalize()} без номера телефону створений" 
-    
-    return f" "
+    name = Name(text[1].capitalize())
+    phone = None
+    birthday = None
+    if len(text) >= 3:
+        phone = Phone(text[2])
+    elif len(text) >= 4:
+        birthday = Birthday(text[3])   
+    rec = Record(name, phone, birthday)
+    return adress_book.add_record(rec)
 
 # Додавання телефону до контакту
 @input_error
 def add_phone(uzer_input: str) -> str:
     text = uzer_input.split()
     rec = adress_book[text[2].capitalize()]
-    rec.add_phone(Phone(text[3]))
-    return f"До контакту {text[2].capitalize()} доданий новий телефон"
+    return rec.add_phone(Phone(text[3]))
+    # return f"До контакту {text[2].capitalize()} доданий новий телефон"
 
 # Додає день народження 
 @input_error
@@ -74,11 +66,14 @@ def add_birthday(uzer_input: str) -> str:
 @input_error
 def change_phone(uzer_input: str) -> str:
     text = uzer_input.split()
-    rec = adress_book[text[2].capitalize()]
-    ret = f"{rec.name.value} : {[phone.value for phone in adress_book[rec.name.value].phones]}\n" + "Змінено на\n"
-    rec.edit_phone(Phone(text[3]), Phone(text[4]))
-    ret += f"{rec.name.value} : {[phone.value for phone in rec.phones]}"
-    return ret
+    rec = adress_book.get(text[2].capitalize())
+    if rec:
+        return rec.edit_phone(Phone(text[3]), Phone(text[4]))
+    return f"Contact wit name {text[2].capitalize()} doesn`t exist."
+    # ret = f"{rec.name.value} : {[phone.value for phone in adress_book[rec.name.value].phones]}\n" + "Змінено на\n"
+    # rec.edit_phone(Phone(text[3]), Phone(text[4]))
+    # ret += f"{rec.name.value} : {[phone.value for phone in rec.phones]}"
+    # return ret
 
 # Зупиняє роботу асистента.
 @input_error

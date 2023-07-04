@@ -8,10 +8,11 @@ class AddtextsBook(UserDict):
     def add_record(self, record):
         if record.name.value not in self.keys():
             self.data[record.name.value] = record
-            return True
+            return f"{record} add successful"
         else:
-            print("Name already exist. Try add phone command for add extra phone.")
-            return False
+            return f"Contact with name {record.name} already exist." \
+                "Try add phone command for add extra phone."
+            # return False
     
     def iterator(self, num:int) -> str:
         result = self.create_page(num)
@@ -102,8 +103,14 @@ class Field:
         if value:
             self.__value = value
     
+    def __str__(self):
+        return self.value
+    
     def __repr__(self) -> str:
-        return f"{self.__value}"
+        return str(self)
+    
+    def __eq__(self, other: object) -> bool:
+        return self.value == other.value
 
 
 class Name(Field):
@@ -165,19 +172,21 @@ class Record:
         else: 
             self.phones.append(phones)
     
-
     # Додає номер 
     def add_phone(self, phones: Phone) -> None:
+        print(self.phones)
+        if phones not in self.phones:
+            self.phones.append(phones)
+            return f"Phone {phones} add to contact {self.name}"
+        return f"The contact {self.name} already has the phone {phones}"
     
-        if phones.value not in [phones.value for phones in self.phones]:
-            if "No Phone" in [phones.value for phones in self.phones]:
-                self.phones[0] = phones
-            else:
-                self.phones.append(phones)
-        else:
-            print("This phone already added.")
-
-            
+        # if phones.value not in [phones.value for phones in self.phones]:
+        #     if "No Phone" in [phones.value for phones in self.phones]:
+        #         self.phones[0] = phones
+        #     else:
+        #         self.phones.append(phones)
+        # else:
+        #     print("This phone already added.")
 
     # Видаляє номер 
     def remove_phone(self, phones: Phone) -> None:
@@ -187,14 +196,19 @@ class Record:
 
     # Заміна номера А на номер Б
     def edit_phone(self, old_phone: Phone, new_phone: Phone) -> None:
-        if old_phone.value == new_phone.value or new_phone.value in [phone.value for phone in self.phones]:
-            print("This phone alredy exist!")
-        elif old_phone.value not in [phone.value for phone in self.phones]:
-            print("This phone not found!")
-        else:
+        if old_phone in self.phones:
             self.remove_phone(old_phone)
             self.add_phone(new_phone)
-            print("Phone changed.")
+            return f"Phone {old_phone} change to phone {new_phone} for contact {self.name}"
+        return f"Phone {old_phone} for contact {self.name} doesn`t exist"
+        # if old_phone.value == new_phone.value or new_phone.value in [phone.value for phone in self.phones]:
+        #     print("This phone alredy exist!")
+        # elif old_phone.value not in [phone.value for phone in self.phones]:
+        #     print("This phone not found!")
+        # else:
+        #     self.remove_phone(old_phone)
+        #     self.add_phone(new_phone)
+        #     print("Phone changed.")
 
     # Додає birthday
     def add_to_birthday(self, birthday: Birthday) -> None:
@@ -224,6 +238,10 @@ class Record:
             seconds = int(days_birthday.seconds % 60)
             return f"{days_birthday.days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
 
+    def __str__(self):
+        return "{}{}{}".format(self.name,
+                                     " " + ", ".join([str(p) for p in self.phones]) if self.phones else "",
+                                     " " + self.birthday if self.birthday else "")
 
 class IncorrectDateFormat(Exception):
     pass
